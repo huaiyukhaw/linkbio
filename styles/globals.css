@@ -1,3 +1,27 @@
+@import url('https://rsms.me/inter/inter.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+
+    /* Scroll thumb styles */
+    .scrollbar::-webkit-scrollbar {
+        width: .5rem;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+        @apply invisible bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700;
+        border-radius: 1rem;
+    }
+
+    .scrollbar-visible::-webkit-scrollbar-thumb {
+        @apply visible;
+    }
+
+    /* Scroll track styles (Background) */
+    .scrollbar::-webkit-scrollbar-track {
+        display: none;
+    }
+}

@@ -1,14 +1,16 @@
 import Auth from '../components/Auth'
-import Account from '../components/Account'
-import ProfileList from '../components/ProfileList'
+import Dashboard from '../components/Dashboard'
+import UserProfile from '../components/UserProfile'
+import NavbarComponent from '../components/Navbar'
+// import ProfileList from '../components/ProfileList'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { AuthSession } from '@supabase/supabase-js'
-import { Profile } from '../lib/constants'
+import { Profile, EmptyProfile } from '../lib/constants'
 
 export default function Home() {
   const [session, setSession] = useState<AuthSession | null>(null)
-  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [profile, setProfile] = useState<Profile>(EmptyProfile)
 
   useEffect(() => {
     setSession(supabase.auth.session())
@@ -19,40 +21,56 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    getPublicProfiles()
+    getUserProfile()
   }, [])
 
-  async function getPublicProfiles() {
+  async function getUserProfile() {
     try {
+      const user = supabase.auth.user()
+
       const { data, error } = await supabase
         .from<Profile>("profiles")
-        .select("id, username, avatar_url, links, updated_at")
-        .order("updated_at", { ascending: false })
+        .select()
+        .eq("id", user!.id)
+        .single()
 
       if (error || !data) {
         throw error || new Error("No data")
       }
-      console.log("Public profiles:", data)
-      setProfiles(data)
+      setProfile(data)
     } catch (error: any) {
       console.log("error", error.message)
     }
   }
 
   return (
-    <div>
+    <>
       {!session ? (
         <Auth />
       ) : (
-        <div className="min-h-screen flex">
-          <div className="p-12 bg-indigo-500 grow-0">
-            <ProfileList profiles={profiles} />
-          </div>
-          <div className="p-12  bg-red-500 flex-1">
-            <Account key={session.user.id} session={session} />
+        <div
+          className="
+            flex flex-col
+            h-screen
+            w-screen
+            overflow-auto
+          bg-gray-100
+          dark:bg-gray-900
+          dark:text-white
+            absolute
+          ">
+          <header className="flex-shrink-0 w-full">
+            <NavbarComponent profile={profile} session={session} />
+          </header>
+          <div className="flex p-4 overflow-auto grow">
+            <div className="hidden flex-none md:flex justify-end items-start pr-16 pt-8 w-5/12">
+              <UserProfile userProfile={profile} />
+            </div>
+            <Dashboard key={session.user?.id} session={session} />
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </ >
   )
 }

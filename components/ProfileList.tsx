@@ -1,4 +1,4 @@
-import ProfileCard from '../components/ProfileCard'
+import ProfileCard from './Profile'
 import { Profile } from '../lib/constants'
 import { supabase } from '../lib/supabaseClient'
 import { useEffect, useReducer } from 'react'
@@ -20,12 +20,12 @@ type ProfileListProps = {
 }
 
 const handleDatabaseEvent = (state: State, action: Action) => {
-    if (action.type === 'upsert') {
+    if (action.type === "upsert") {
         const otherProfiles = state.profiles.filter((x) => x.id != action.payload.id)
         return {
             profiles: [action.payload, ...otherProfiles],
         }
-    } else if (action.type === 'set') {
+    } else if (action.type === "set") {
         return {
             profiles: action.payload,
         }
@@ -39,9 +39,9 @@ export default function ProfileList({ profiles }: ProfileListProps) {
 
     useEffect(() => {
         const subscription = supabase
-            .from('profiles')
-            .on('*', (payload) => {
-                dispatch({ type: 'upsert', payload: payload.new })
+            .from("profiles")
+            .on("*", (payload) => {
+                dispatch({ type: "upsert", payload: payload.new })
             })
             .subscribe()
 
@@ -51,7 +51,7 @@ export default function ProfileList({ profiles }: ProfileListProps) {
     }, [])
 
     useEffect(() => {
-        dispatch({ type: 'set', payload: profiles })
+        dispatch({ type: "set", payload: profiles })
     }, [profiles])
 
     return (
@@ -61,7 +61,7 @@ export default function ProfileList({ profiles }: ProfileListProps) {
             ) : (
                 <div className="profileList">
                     {state.profiles?.map((profile: any) => (
-                        <ProfileCard profile={profile} key={profile.id} />
+                        <ProfileCard profile={profile} mode="card" key={profile.id} />
                     ))}
                 </div>
             )}

@@ -5,12 +5,10 @@ import { Flowbite, DarkThemeToggle } from 'flowbite-react'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Flowbite>
-      <div className="bg-white dark:bg-gray-800 h-screen">
-        <div className="absolute right-0">
-          <DarkThemeToggle />
-        </div>
-        <Component {...pageProps} />
+      <div className="absolute right-4 top-3 z-50">
+        <DarkThemeToggle />
       </div>
+      <Component {...pageProps} />
     </Flowbite>
   )
 }

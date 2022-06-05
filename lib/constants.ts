@@ -6,12 +6,25 @@ export const DEFAULT_AVATARS_BUCKET = 'avatars'
 export type Link = {
     title: string;
     url: string;
+    id: string;
 };
 
 export type Profile = {
     id: string
     avatar_url: string
     username: string
+    name: string
+    bio: string
     links: Link[]
     updated_at: string
+}
+
+export const EmptyProfile = {
+    "id": "",
+    "avatar_url": "",
+    "username": "",
+    "name": "",
+    "bio": "",
+    "links": [],
+    "updated_at": ""
 }
