@@ -397,7 +397,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                             <div className="flex items-center justify-center gap-4 p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                                 <div className="flex-1">
                                     <h5 className="break-all mb-1 font-bold text-gray-900 dark:text-white">Your link is here!</h5>
-                                    <a href={`${HOST}/${username}`} target="_blank" className="break-all font-normal text-gray-700 dark:text-gray-400 dark:hover:text-white hover:underline">{DOMAIN}/{username}</a>
+                                    <a href={`${HOST}/${username}`} target="_blank" rel="noreferrer" className="break-all font-normal text-gray-700 dark:text-gray-400 dark:hover:text-white hover:underline">{DOMAIN}/{username}</a>
                                 </div>
                                 <div>
                                     <CopyToClipboard text={`${HOST}/${username}`} onCopy={copyLink}>

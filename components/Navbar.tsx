@@ -40,7 +40,7 @@ export default function NavbarComponent({ profile, session }: { profile: Profile
                     {
                         profile.username &&
                         <>
-                            <a className="dark:text-gray-300 dark:hover:text-white hover:underline truncate w-28 md:w-auto" href={`${HOST}/${profile.username}`} target="_blank">{DOMAIN}/{profile.username}</a>
+                            <a className="dark:text-gray-300 dark:hover:text-white hover:underline truncate w-28 md:w-auto" href={`${HOST}/${profile.username}`} target="_blank" rel="noreferrer">{DOMAIN}/{profile.username}</a>
                             <CopyToClipboard text={`${HOST}/${profile.username}`}
                                 onCopy={copyLink}>
                                 <Button color="alternative" >

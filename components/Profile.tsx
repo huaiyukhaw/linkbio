@@ -32,7 +32,7 @@ export default function ProfileComponent({ profile, mode }: { profile: Profile, 
                                     className="group cursor-pointer flex gap-2 items-center p-4 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
                                     key={link.id}
                                     href={link.url}
-                                    target="_blank"
+                                    target="_blank" rel="noreferrer"
                                 >
                                     <div className="flex-1">
                                         <h5 className="break-all mb-1 font-bold text-gray-900 dark:text-white">{link.title}</h5>
