@@ -41,7 +41,7 @@ export async function getServerSideProps({ params }: { params: Profile }) {
     }
 }
 
-export default function User({ data: profile }: { data: Profile }) {
+export default function Username({ data: profile }: { data: Profile }) {
     return (
         <ProfilePage profile={profile} mode="page" />
     )

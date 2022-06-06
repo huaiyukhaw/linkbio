@@ -1,5 +1,4 @@
 const colors = require('tailwindcss/colors')
-console.log(colors.violet)
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -16,5 +15,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [
+    require("flowbite/plugin"),
+    require('@tailwindcss/line-clamp')
+  ],
 }

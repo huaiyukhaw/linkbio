@@ -4,12 +4,13 @@ import UploadAvatarButton from './UploadAvatarButton'
 import RemoveAvatarButton from './RemoveAvatarButton'
 import Avatar from './Avatar'
 import { AuthSession } from '@supabase/supabase-js'
-import { DEFAULT_AVATARS_BUCKET, Profile, Link } from '../lib/constants'
-import { Label, TextInput, Button, Modal, Spinner, Tabs } from 'flowbite-react'
+import { DEFAULT_AVATARS_BUCKET, DOMAIN, HOST, Profile, Link } from '../lib/constants'
+import { Label, TextInput, Button, Modal, Spinner, Tabs, DarkThemeToggle } from 'flowbite-react'
 import { MdOutlineEdit, MdAdd } from 'react-icons/md'
 import { HiAtSymbol } from 'react-icons/hi'
 import { v4 as uuidv4 } from 'uuid'
 import { ReactSortable } from "react-sortablejs";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export default function Dashboard({ session }: { session: AuthSession }) {
     const [loading, setLoading] = useState<boolean>(true)
@@ -20,6 +21,8 @@ export default function Dashboard({ session }: { session: AuthSession }) {
     const [username, setUsername] = useState<string | null>(null)
     const [name, setName] = useState<string | null>(null)
     const [bio, setBio] = useState<string | null>(null)
+    const [published, setPublished] = useState<boolean>(false)
+    const [claimed, setClaimed] = useState<boolean>(false)
     const [linkTitle, setLinkTitle] = useState<string>("")
     const [linkUrl, setLinkUrl] = useState<string>("")
     const [linkId, setLinkId] = useState<string>("")
@@ -27,6 +30,8 @@ export default function Dashboard({ session }: { session: AuthSession }) {
     const [editingLink, setEditingLink] = useState<boolean>(false)
     const [links, setLinks] = useState<Link[]>([])
     const [isEdit, setIsEdit] = useState<boolean>(false)
+    const [isClaiming, setIsClaiming] = useState<boolean>(false)
+    const [copied, setCopied] = useState<boolean>(false)
 
     useEffect(() => {
         getProfile()
@@ -34,9 +39,14 @@ export default function Dashboard({ session }: { session: AuthSession }) {
 
     useEffect(() => {
         if (pageLoaded) {
-            updateProfile()
+            updateLinks()
         }
     }, [links])
+
+    async function signOut() {
+        const { error } = await supabase.auth.signOut()
+        if (error) console.log("Error logging out:", error.message)
+    }
 
     async function uploadAvatar(event: ChangeEvent<HTMLInputElement>) {
         try {
@@ -114,6 +124,8 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         setName(profile.name)
         setBio(profile.bio)
         setLinks(profile.links)
+        setClaimed(profile.claimed)
+        setPublished(profile.published)
     }
 
     async function getProfile() {
@@ -170,6 +182,113 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         }
     }
 
+    async function updateNameAndBio() {
+        try {
+            setLoading(true)
+            const user = supabase.auth.user()
+
+            const updates = {
+                id: user!.id,
+                name: name,
+                bio: bio,
+                updated_at: new Date(),
+            }
+
+            let { error } = await supabase.from("profiles").upsert(updates, {
+                returning: "minimal", // Don"t return the value after inserting
+            })
+
+            if (error) {
+                throw error
+            }
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setIsEdit(false)
+            setLoading(false)
+        }
+    }
+
+    async function updateLinks() {
+        try {
+            setLoading(true)
+            const user = supabase.auth.user()
+
+            const updates = {
+                id: user!.id,
+                links: links,
+                updated_at: new Date(),
+            }
+
+            let { error } = await supabase.from("profiles").upsert(updates, {
+                returning: "minimal", // Don"t return the value after inserting
+            })
+
+            if (error) {
+                throw error
+            }
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setIsEdit(false)
+            setLoading(false)
+        }
+    }
+
+    async function updateUsername() {
+        try {
+            setLoading(true)
+            const user = supabase.auth.user()
+
+            const updates = {
+                id: user!.id,
+                username: username,
+                updated_at: new Date(),
+            }
+
+            let { error } = await supabase.from("profiles").upsert(updates, {
+                returning: "minimal", // Don"t return the value after inserting
+            })
+
+            if (error) {
+                throw error
+            }
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setIsEdit(false)
+            setLoading(false)
+        }
+    }
+
+    async function claimUsername() {
+        try {
+            setIsClaiming(true)
+            const user = supabase.auth.user()
+
+            const updates = {
+                id: user!.id,
+                username: username,
+                updated_at: new Date(),
+                claimed: true
+            }
+
+            let { error } = await supabase.from("profiles").upsert(updates, {
+                returning: "minimal", // Don"t return the value after inserting
+            })
+
+            if (error) {
+                throw error
+            }
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setIsEdit(false)
+            setClaimed(true)
+            setIsClaiming(false)
+        }
+    }
+
     function checkUrlPrefix(s: string) {
         var httpPrefix = "http://";
         var httpsPrefix = "https://";
@@ -201,26 +320,34 @@ export default function Dashboard({ session }: { session: AuthSession }) {
     }
 
     function saveNewLink() {
-        const newLink = { "title": linkTitle, "url": checkUrlPrefix(linkUrl), "id": uuidv4() }
-        setLinks((oldArray) => {
-            return [...oldArray, newLink]
-        })
-        resetLink()
+        if (linkTitle !== "" && linkUrl !== "") {
+            const newLink = { "title": linkTitle, "url": checkUrlPrefix(linkUrl), "id": uuidv4() }
+            setLinks((oldArray) => {
+                return [...oldArray, newLink]
+            })
+            resetLink()
+        } else {
+            alert("New link must not be empty.")
+        }
     }
 
     function saveEditedLink() {
-        const newLinks = links.map((link) => {
-            if (link.id === linkId) {
-                return {
-                    title: linkTitle,
-                    url: linkUrl,
-                    id: linkId
+        if (linkTitle !== "" && linkUrl !== "") {
+            const newLinks = links.map((link) => {
+                if (link.id === linkId) {
+                    return {
+                        title: linkTitle,
+                        url: linkUrl,
+                        id: linkId
+                    }
                 }
-            }
-            return link
-        });
-        setLinks(newLinks)
-        resetLink()
+                return link
+            });
+            setLinks(newLinks)
+            resetLink()
+        } else {
+            alert("Link must not be empty.")
+        }
     }
 
     function deleteLink() {
@@ -241,6 +368,20 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         }
     }
 
+    function handleClaimChange(event: ChangeEvent<HTMLInputElement>) {
+        if (/\s/g.test(event.target.value)) {
+            event.target.value = event.target.value.replace(/\s/g, "")
+        }
+        setUsername(event.target.value)
+    }
+
+    function copyLink() {
+        setCopied(true)
+        setTimeout(() => {
+            setCopied(false)
+        }, 3000)
+    }
+
     return (
         <div className="dark:text-white w-full py-6 px-2 sm:px-6 overflow-auto scrollbar hover:scrollbar-visible">
             <Tabs.Group
@@ -251,189 +392,37 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                 <Tabs.Item
                     title="Links"
                 >
-                    <div className="max-w-xl flex flex-col px-1 gap-4">
-                        <Button
-                            onClick={() => { setAddingLink(true) }}
-                            gradientDuoTone="purpleToBlue"
-                            className="!w-full"
-                        >
-                            <MdAdd className="mr-2 -ml-1" />
-                            Add Link
-                        </Button>
-                        <ReactSortable
-                            list={links}
-                            setList={setLinks}
-                            className="flex flex-col gap-2 select-none"
-                            animation={150}
-                            easing="cubic-bezier(1, 0, 0, 1)"
-                            ghostClass="opacity-0"
-                            handle=".drag-handle"
-                        >
-                            {
-                                links.map((link) => (
-                                    <div
-                                        className="drag-handle cursor-move relative group flex items-center w-full bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-                                        key={link.id}
-                                    >
-                                        <div className="p-4">
-                                            <h5 className="break-all mb-1 font-bold text-gray-900 dark:text-white">{link.title}</h5>
-                                            <p className="break-all font-normal text-gray-700 dark:text-gray-400">{link.url}</p>
-                                        </div>
-                                        <div
-                                            className="invisible group-hover:visible cursor-pointer flex gap-1 items-center justify-center absolute right-0 top-2/4 transform -translate-y-1/2 mx-2 px-3 rounded-full bg-gray-50 hover:bg-gray-300 dark:bg-gray-800 hover:dark:bg-gray-900 p-1.5 border border-gray-200 dark:border-gray-700"
-                                            onClick={() => editLink(link)}
-                                        >
-                                            <MdOutlineEdit className="mr-0.5 -ml-0.5" />
-                                            <div className="text-sm font-semibold">Edit</div>
-                                        </div>
-                                    </div>
-                                ))
-                            }
-                        </ReactSortable>
-                        <Modal
-                            show={addingLink || editingLink}
-                            size="md"
-                            popup={true}
-                            onClose={() => { resetLink() }}
-                        >
-                            <Modal.Header />
-                            <Modal.Body className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
-                                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                                    Add new link
-                                </h3>
-                                <div>
-                                    <Label
-                                        className="mb-2 block"
-                                        htmlFor="linkTitle"
-                                    >
-                                        Title
-                                    </Label>
-                                    <TextInput
-                                        id="linkTitle"
-                                        className="dark:border-gray-500 dark:bg-gray-600"
-                                        type="text"
-                                        value={linkTitle || ""}
-                                        placeholder="Title"
-                                        onChange={(e) => setLinkTitle(e.target.value)}
-                                    />
+                    <div className="flex flex-col gap-4">
+                        {claimed ?
+                            <div className="flex items-center justify-center gap-4 p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                                <div className="flex-1">
+                                    <h5 className="break-all mb-1 font-bold text-gray-900 dark:text-white">Your linkbio is here!</h5>
+                                    <a href={`${HOST}/${username}`} target="_blank" className="break-all font-normal text-gray-700 dark:text-gray-400 dark:hover:text-white hover:underline">{DOMAIN}/{username}</a>
                                 </div>
                                 <div>
-                                    <Label
-                                        className="mb-2 block"
-                                        htmlFor="linkUrl"
-                                    >
-                                        URL
-                                    </Label>
-                                    <TextInput
-                                        id="linkUrl"
-                                        className="dark:border-gray-500 dark:bg-gray-600"
-                                        type="text"
-                                        value={linkUrl || ""}
-                                        placeholder="URL"
-                                        onChange={(e) => setLinkUrl(e.target.value)}
-                                    />
+                                    <CopyToClipboard text={`${HOST}/${username}`} onCopy={copyLink}>
+                                        <Button color="alternative" >
+                                            {copied ? "Copied" : "Copy"}
+                                        </Button>
+                                    </CopyToClipboard>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {
-                                        editingLink ? (
-                                            <>
-                                                <Button onClick={saveEditedLink}>
-                                                    Save Edit
-                                                </Button>
-                                                <Button onClick={deleteLink} color="red">
-                                                    Delete
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <Button onClick={saveNewLink}>
-                                                Save
-                                            </Button>
-                                        )
-                                    }
-                                </div>
-                            </Modal.Body>
-                        </Modal>
-                    </div>
-                </Tabs.Item>
-                <Tabs.Item title="Design">
-                    <div className="p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                        <div className="flex">
-                            <form className="flex-1 flex flex-col gap-4">
-                                <h5 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    Profile
-                                </h5>
-                                <div className="flex">
-                                    <div className="flex flex-col gap-4 flex-1">
-                                        <TextInput
-                                            id="name"
-                                            type="text"
-                                            value={name || ""}
-                                            placeholder="Name"
-                                            onChange={(e) => { setName(e.target.value); setIsEdit(true) }}
-                                        />
-                                        <TextInput
-                                            id="bio"
-                                            type="text"
-                                            value={bio || ""}
-                                            placeholder="Bio"
-                                            onChange={(e) => { setBio(e.target.value); setIsEdit(true) }}
-                                        />
-                                    </div>
-                                    <div className="w-28 text-end">
-                                        <label htmlFor="avatar" className="sr-only">Avatar image</label>
-                                        <div className="flex flex-col items-end text-center relative">
-                                            <Avatar url={avatar} size="xl" mode="edit">
-                                                {
-                                                    avatar ?
-                                                        <RemoveAvatarButton onDelete={removeAvatar} loading={removing} /> :
-                                                        <UploadAvatarButton onUpload={uploadAvatar} loading={uploading} size="xl" />
-                                                }
-                                            </Avatar>
-                                        </div>
-                                    </div>
-                                </div>
-                                {isEdit &&
-                                    <Button type="submit" onClick={updateProfile} disabled={loading} className="!w-full" gradientDuoTone="purpleToPink">
-                                        {loading ?
-                                            <>
-                                                <Spinner
-                                                    className="mr-2 -mt-1"
-                                                    size="sm"
-                                                    light={true}
-                                                />
-                                                <div>Loading ...</div>
-                                            </> : <div>Update</div>
-                                        }
-                                    </Button>
-                                }
-                            </form>
-                        </div>
-                    </div>
-                </Tabs.Item>
-                <Tabs.Item title="Settings">
-                    <div className="p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                        <div className="flex">
-                            <form className="flex-1 flex flex-col gap-4">
-                                <h5 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    Username
-                                </h5>
-                                <div className="flex">
-                                    <div className="flex flex-col gap-4 flex-1">
+                            </div>
+                            :
+                            <div className="p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                                <form className="flex gap-2 flex-col sm:flex-row">
+                                    <div className="flex-1">
                                         <TextInput
                                             id="username"
                                             type="text"
                                             value={username || ""}
-                                            placeholder="Username"
-                                            onChange={(e) => handleUsernameChange(e)}
-                                            icon={HiAtSymbol}
-                                            helperText={<>You can change your username to another username that is not currently in use.</>
-                                            }
+                                            placeholder="yourname"
+                                            className="pl-[120px] font-semibold"
+                                            onChange={(e) => handleClaimChange(e)}
+                                            icon={() => <div className="opacity-70 text-sm">{`${DOMAIN}/`}</div>}
                                         />
                                     </div>
-                                </div>
-                                {isEdit &&
-                                    <Button type="submit" onClick={updateProfile} disabled={loading} className="!w-full" gradientDuoTone="purpleToPink">
-                                        {loading ?
+                                    <Button type="submit" className="!w-full sm:!w-max" onClick={claimUsername} disabled={loading} gradientDuoTone="purpleToPink">
+                                        {isClaiming ?
                                             <>
                                                 <Spinner
                                                     className="mr-2 -mt-1"
@@ -441,12 +430,222 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                                     light={true}
                                                 />
                                                 <div>Loading ...</div>
-                                            </> : <div>Update</div>
+                                            </> : <div>Claim my link</div>
                                         }
                                     </Button>
-                                }
-                            </form>
+                                </form>
+                            </div>
+                        }
+                        <div className="p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                            <div className="flex">
+                                <form className="flex-1 flex flex-col gap-4">
+                                    <h5 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        Profile
+                                    </h5>
+                                    <div className="flex">
+                                        <div className="flex flex-col gap-4 flex-1">
+                                            <TextInput
+                                                id="name"
+                                                type="text"
+                                                value={name || ""}
+                                                placeholder="Name"
+                                                onChange={(e) => { setName(e.target.value); setIsEdit(true) }}
+                                            />
+                                            <TextInput
+                                                id="bio"
+                                                type="text"
+                                                value={bio || ""}
+                                                placeholder="Bio"
+                                                onChange={(e) => { setBio(e.target.value); setIsEdit(true) }}
+                                            />
+                                        </div>
+                                        <div className="w-28 text-end">
+                                            <label htmlFor="avatar" className="sr-only">Avatar image</label>
+                                            <div className="flex flex-col items-end text-center relative">
+                                                <Avatar url={avatar} size="xl" mode="edit">
+                                                    {
+                                                        avatar ?
+                                                            <RemoveAvatarButton onDelete={removeAvatar} loading={removing} /> :
+                                                            <UploadAvatarButton onUpload={uploadAvatar} loading={uploading} size="xl" />
+                                                    }
+                                                </Avatar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {isEdit &&
+                                        <Button type="submit" onClick={updateNameAndBio} disabled={loading} className="!w-full" gradientDuoTone="purpleToPink">
+                                            {loading ?
+                                                <>
+                                                    <Spinner
+                                                        className="mr-2 -mt-1"
+                                                        size="sm"
+                                                        light={true}
+                                                    />
+                                                    <div>Loading ...</div>
+                                                </> : <div>Update</div>
+                                            }
+                                        </Button>
+                                    }
+                                </form>
+                            </div>
                         </div>
+                        <div className="max-w-xl flex flex-col gap-4">
+                            <Button
+                                onClick={() => { setAddingLink(true) }}
+                                gradientDuoTone="purpleToBlue"
+                                className="!w-full"
+                            >
+                                <MdAdd className="mr-2 -ml-1" />
+                                Add Link
+                            </Button>
+                            <ReactSortable
+                                list={links}
+                                setList={setLinks}
+                                className="flex flex-col gap-2 select-none"
+                                animation={150}
+                                easing="cubic-bezier(1, 0, 0, 1)"
+                                ghostClass="opacity-0"
+                                handle=".drag-handle"
+                            >
+                                {
+                                    links.map((link) => (
+                                        <div
+                                            className="drag-handle cursor-move relative group flex items-center w-full bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                                            key={link.id}
+                                        >
+                                            <div className="p-4">
+                                                <h5 className="break-all mb-1 font-bold text-gray-900 dark:text-white">{link.title}</h5>
+                                                <p className="break-all font-normal text-gray-700 dark:text-gray-400">{link.url}</p>
+                                            </div>
+                                            <div
+                                                className="invisible group-hover:visible cursor-pointer flex gap-1 items-center justify-center absolute right-0 top-2/4 transform -translate-y-1/2 mx-2 px-3 rounded-full bg-gray-50 hover:bg-gray-300 dark:bg-gray-800 hover:dark:bg-gray-900 p-1.5 border border-gray-200 dark:border-gray-700"
+                                                onClick={() => editLink(link)}
+                                            >
+                                                <MdOutlineEdit className="mr-0.5 -ml-0.5" />
+                                                <div className="text-sm font-semibold">Edit</div>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </ReactSortable>
+                            <Modal
+                                show={addingLink || editingLink}
+                                size="md"
+                                popup={true}
+                                onClose={() => { resetLink() }}
+                            >
+                                <Modal.Header />
+                                <Modal.Body className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+                                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                                        {
+                                            editingLink ? "Edit link" : "Add new link"
+                                        }
+                                    </h3>
+                                    <div>
+                                        <Label
+                                            className="mb-2 block"
+                                            htmlFor="linkTitle"
+                                        >
+                                            Title
+                                        </Label>
+                                        <TextInput
+                                            id="linkTitle"
+                                            className="dark:border-gray-500 dark:bg-gray-600"
+                                            type="text"
+                                            value={linkTitle || ""}
+                                            placeholder="Title"
+                                            onChange={(e) => setLinkTitle(e.target.value)}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label
+                                            className="mb-2 block"
+                                            htmlFor="linkUrl"
+                                        >
+                                            URL
+                                        </Label>
+                                        <TextInput
+                                            id="linkUrl"
+                                            className="dark:border-gray-500 dark:bg-gray-600"
+                                            type="text"
+                                            value={linkUrl || ""}
+                                            placeholder="URL"
+                                            onChange={(e) => setLinkUrl(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {
+                                            editingLink ? (
+                                                <>
+                                                    <Button onClick={saveEditedLink}>
+                                                        Save Edit
+                                                    </Button>
+                                                    <Button onClick={deleteLink} color="red">
+                                                        Delete
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <Button onClick={saveNewLink}>
+                                                    Save
+                                                </Button>
+                                            )
+                                        }
+                                    </div>
+                                </Modal.Body>
+                            </Modal>
+                        </div>
+                    </div>
+                </Tabs.Item>
+                <Tabs.Item title="Settings">
+                    <div className="flex flex-col gap-4">
+                        {claimed &&
+                            <div className="p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                                <div className="flex">
+                                    <form className="flex-1 flex flex-col gap-4">
+                                        <h5 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                            Username
+                                        </h5>
+                                        <div className="flex">
+                                            <div className="flex flex-col gap-4 flex-1">
+                                                <TextInput
+                                                    id="username"
+                                                    type="text"
+                                                    value={username || ""}
+                                                    placeholder="Username"
+                                                    onChange={(e) => handleUsernameChange(e)}
+                                                    icon={HiAtSymbol}
+                                                    helperText={<>You can change your username to another username that is not currently in use.</>
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                        {isEdit &&
+                                            <Button type="submit" onClick={updateUsername} disabled={loading} className="!w-full" gradientDuoTone="purpleToPink">
+                                                {loading ?
+                                                    <>
+                                                        <Spinner
+                                                            className="mr-2 -mt-1"
+                                                            size="sm"
+                                                            light={true}
+                                                        />
+                                                        <div>Loading ...</div>
+                                                    </> : <div>Update</div>
+                                                }
+                                            </Button>
+                                        }
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                        <div className="p-6 max-w-xl bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700 flex justify-center items-center">
+                            <h5 className="text-2xl font-bold text-gray-900 dark:text-white flex-1">
+                                Switch to dark or light theme
+                            </h5>
+                            <DarkThemeToggle />
+                        </div>
+                        <Button color="red" onClick={signOut}>
+                            Sign Out
+                        </Button>
                     </div>
                 </Tabs.Item>
                 {/* <Tabs.Item title="Stats">

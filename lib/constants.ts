@@ -1,5 +1,7 @@
 export const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 export const NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+export const HOST = process.env.NEXT_PUBLIC_HOST
+export const DOMAIN = process.env.NEXT_PUBLIC_HOST!.replace("http://", "").replace("https://", "")
 
 export const DEFAULT_AVATARS_BUCKET = 'avatars'
 
@@ -16,7 +18,9 @@ export type Profile = {
     name: string
     bio: string
     links: Link[]
-    updated_at: string
+    updated_at: string,
+    published: boolean,
+    claimed: boolean
 }
 
 export const EmptyProfile = {
@@ -26,5 +30,7 @@ export const EmptyProfile = {
     "name": "",
     "bio": "",
     "links": [],
-    "updated_at": ""
+    "updated_at": "",
+    "published": false,
+    "claimed": false
 }

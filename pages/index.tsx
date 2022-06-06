@@ -1,8 +1,7 @@
 import Auth from '../components/Auth'
 import Dashboard from '../components/Dashboard'
 import UserProfile from '../components/UserProfile'
-import NavbarComponent from '../components/Navbar'
-// import ProfileList from '../components/ProfileList'
+import Navbar from '../components/Navbar'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { AuthSession } from '@supabase/supabase-js'
@@ -44,24 +43,20 @@ export default function Home() {
   }
 
   return (
-    <>
+    <div className="bg-gray-100 dark:bg-gray-900 dark:text-white h-screen w-screen">
       {!session ? (
         <Auth />
       ) : (
         <div
           className="
             flex flex-col
-            h-screen
-            w-screen
+            h-screen w-screen
             overflow-auto
-          bg-gray-100
-          dark:bg-gray-900
-          dark:text-white
             absolute
           ">
-          <header className="flex-shrink-0 w-full">
-            <NavbarComponent profile={profile} session={session} />
-          </header>
+          {/* <header className="flex-shrink-0 w-full">
+            <Navbar profile={profile} session={session} />
+          </header> */}
           <div className="flex p-4 overflow-auto grow">
             <div className="hidden flex-none md:flex justify-end items-start pr-16 pt-8 w-5/12">
               <UserProfile userProfile={profile} />
@@ -71,6 +66,6 @@ export default function Home() {
         </div>
       )
       }
-    </ >
+    </div>
   )
 }

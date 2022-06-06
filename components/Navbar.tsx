@@ -1,5 +1,5 @@
 import { Navbar, Dropdown, Button } from "flowbite-react"
-import { Profile } from '../lib/constants'
+import { Profile, HOST, DOMAIN } from '../lib/constants'
 import { MdLink } from "react-icons/md"
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useState } from "react";
@@ -37,13 +37,18 @@ export default function NavbarComponent({ profile, session }: { profile: Profile
                     </span>
                 </Navbar.Brand>
                 <div className="flex gap-x-2 items-center">
-                    <a className="dark:text-gray-300 dark:hover:text-white hover:underline truncate w-28 md:w-auto" href={`http://localhost:3000/${profile.username}`} target="_blank">localhost:3000/{profile.username}</a>
-                    <CopyToClipboard text={`http://localhost:3000/${profile.username}`}
-                        onCopy={copyLink}>
-                        <Button color="alternative" >
-                            {copied ? "Copied" : "Copy"}
-                        </Button>
-                    </CopyToClipboard>
+                    {
+                        profile.username &&
+                        <>
+                            <a className="dark:text-gray-300 dark:hover:text-white hover:underline truncate w-28 md:w-auto" href={`${HOST}/${profile.username}`} target="_blank">{DOMAIN}/{profile.username}</a>
+                            <CopyToClipboard text={`${HOST}/${profile.username}`}
+                                onCopy={copyLink}>
+                                <Button color="alternative" >
+                                    {copied ? "Copied" : "Copy"}
+                                </Button>
+                            </CopyToClipboard>
+                        </>
+                    }
                     <Dropdown
                         arrowIcon={false}
                         inline={true}
