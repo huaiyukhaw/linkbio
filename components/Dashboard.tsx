@@ -507,7 +507,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                 animation={150}
                                 easing="cubic-bezier(1, 0, 0, 1)"
                                 ghostClass="opacity-0"
-                                chosenClass="scale-105"
+                                chosenClass="dragging"
                                 handle=".drag-handle"
                             >
                                 {

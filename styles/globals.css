@@ -24,4 +24,8 @@
     .scrollbar::-webkit-scrollbar-track {
         display: none;
     }
+
+    .dragging {
+        @apply transition ease-in-out delay-150 -translate-y-1 scale-105 duration-300
+    }
 }
