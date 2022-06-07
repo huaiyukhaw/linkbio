@@ -25,7 +25,7 @@ export default function Auth({ }) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mx-4 py-safe">
+    <div className="flex flex-col items-center justify-center mx-4">
       <div className="max-w-lg mx-auto mt-36 sm:mt-48 lg:mt-64">
         <h1 className="text-5xl sm:text-6xl font-bold text-center">The One Link for All Your Links</h1>
       </div>
