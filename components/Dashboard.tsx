@@ -416,9 +416,8 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                             type="text"
                                             value={username || ""}
                                             placeholder="yourname"
-                                            className="pl-[120px] font-semibold"
                                             onChange={(e) => handleClaimChange(e)}
-                                            icon={() => <div className="opacity-70 text-sm">{`${DOMAIN}/`}</div>}
+                                            helperText={`${DOMAIN}/${username}`}
                                         />
                                     </div>
                                     <Button type="submit" className="!w-full sm:!w-max" onClick={claimUsername} disabled={loading} gradientDuoTone="purpleToPink">
@@ -442,8 +441,20 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                     <h5 className="text-2xl font-bold text-gray-900 dark:text-white">
                                         Profile
                                     </h5>
-                                    <div className="flex">
-                                        <div className="flex flex-col gap-4 flex-1">
+                                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
+                                        <div className="w-28 text-end mx-auto">
+                                            <label htmlFor="avatar" className="sr-only">Avatar image</label>
+                                            <div className="flex flex-col items-end text-center relative">
+                                                <Avatar url={avatar} size="xl" mode="edit">
+                                                    {
+                                                        avatar ?
+                                                            <RemoveAvatarButton onDelete={removeAvatar} loading={removing} /> :
+                                                            <UploadAvatarButton onUpload={uploadAvatar} loading={uploading} size="xl" />
+                                                    }
+                                                </Avatar>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-4 flex-1 sm:order-first">
                                             <TextInput
                                                 id="name"
                                                 type="text"
@@ -458,18 +469,6 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                                 placeholder="Bio"
                                                 onChange={(e) => { setBio(e.target.value); setIsEdit(true) }}
                                             />
-                                        </div>
-                                        <div className="w-28 text-end">
-                                            <label htmlFor="avatar" className="sr-only">Avatar image</label>
-                                            <div className="flex flex-col items-end text-center relative">
-                                                <Avatar url={avatar} size="xl" mode="edit">
-                                                    {
-                                                        avatar ?
-                                                            <RemoveAvatarButton onDelete={removeAvatar} loading={removing} /> :
-                                                            <UploadAvatarButton onUpload={uploadAvatar} loading={uploading} size="xl" />
-                                                    }
-                                                </Avatar>
-                                            </div>
                                         </div>
                                     </div>
                                     {isEdit &&
