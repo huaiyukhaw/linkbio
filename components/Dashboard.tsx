@@ -338,7 +338,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                 if (link.id === linkId) {
                     return {
                         title: linkTitle,
-                        url: linkUrl,
+                        url: checkUrlPrefix(linkUrl),
                         id: linkId
                     }
                 }
