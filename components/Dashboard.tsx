@@ -502,6 +502,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                 list={links}
                                 setList={setLinks}
                                 className="flex flex-col gap-2 select-none"
+                                delay={300}
                                 delayOnTouchOnly={true}
                                 animation={150}
                                 easing="cubic-bezier(1, 0, 0, 1)"
