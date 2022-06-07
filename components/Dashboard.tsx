@@ -29,7 +29,9 @@ export default function Dashboard({ session }: { session: AuthSession }) {
     const [addingLink, setAddingLink] = useState<boolean>(false)
     const [editingLink, setEditingLink] = useState<boolean>(false)
     const [links, setLinks] = useState<Link[]>([])
-    const [isEdit, setIsEdit] = useState<boolean>(false)
+    const [isEditingUsername, setIsEditingUsername] = useState<boolean>(false)
+    const [isEditingName, setIsEditingName] = useState<boolean>(false)
+    const [isEditingBio, setIsEditingBio] = useState<boolean>(false)
     const [isClaiming, setIsClaiming] = useState<boolean>(false)
     const [copied, setCopied] = useState<boolean>(false)
 
@@ -153,34 +155,33 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         }
     }
 
-    async function updateProfile() {
-        try {
-            setLoading(true)
-            const user = supabase.auth.user()
+    // async function updateProfile() {
+    //     try {
+    //         setLoading(true)
+    //         const user = supabase.auth.user()
 
-            const updates = {
-                id: user!.id,
-                username: username,
-                name: name,
-                bio: bio,
-                links: links,
-                updated_at: new Date(),
-            }
+    //         const updates = {
+    //             id: user!.id,
+    //             username: username,
+    //             name: name,
+    //             bio: bio,
+    //             links: links,
+    //             updated_at: new Date(),
+    //         }
 
-            let { error } = await supabase.from("profiles").upsert(updates, {
-                returning: "minimal", // Don"t return the value after inserting
-            })
+    //         let { error } = await supabase.from("profiles").upsert(updates, {
+    //             returning: "minimal", // Don"t return the value after inserting
+    //         })
 
-            if (error) {
-                throw error
-            }
-        } catch (error: any) {
-            alert(error.message)
-        } finally {
-            setIsEdit(false)
-            setLoading(false)
-        }
-    }
+    //         if (error) {
+    //             throw error
+    //         }
+    //     } catch (error: any) {
+    //         alert(error.message)
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
     async function updateNameAndBio() {
         try {
@@ -204,7 +205,8 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         } catch (error: any) {
             alert(error.message)
         } finally {
-            setIsEdit(false)
+            setIsEditingName(false)
+            setIsEditingBio(false)
             setLoading(false)
         }
     }
@@ -230,7 +232,6 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         } catch (error: any) {
             alert(error.message)
         } finally {
-            setIsEdit(false)
             setLoading(false)
         }
     }
@@ -256,7 +257,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         } catch (error: any) {
             alert(error.message)
         } finally {
-            setIsEdit(false)
+            setIsEditingUsername(false)
             setLoading(false)
         }
     }
@@ -283,7 +284,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         } catch (error: any) {
             alert(error.message)
         } finally {
-            setIsEdit(false)
+            setIsEditingUsername(false)
             setClaimed(true)
             setIsClaiming(false)
         }
@@ -363,8 +364,8 @@ export default function Dashboard({ session }: { session: AuthSession }) {
             event.target.value = event.target.value.replace(/\s/g, "")
         }
         setUsername(event.target.value)
-        if (!isEdit) {
-            setIsEdit(true)
+        if (!isEditingUsername) {
+            setIsEditingUsername(true)
         }
     }
 
@@ -373,6 +374,20 @@ export default function Dashboard({ session }: { session: AuthSession }) {
             event.target.value = event.target.value.replace(/\s/g, "")
         }
         setUsername(event.target.value)
+    }
+
+    function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+        setName(event.target.value)
+        if (!isEditingName) {
+            setIsEditingName(true)
+        }
+    }
+
+    function handleBioChange(event: ChangeEvent<HTMLInputElement>) {
+        setBio(event.target.value)
+        if (!isEditingBio) {
+            setIsEditingBio(true)
+        }
     }
 
     function copyLink() {
@@ -461,18 +476,18 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                                     type="text"
                                                     value={name || ""}
                                                     placeholder="Name"
-                                                    onChange={(e) => { setName(e.target.value); setIsEdit(true) }}
+                                                    onChange={handleNameChange}
                                                 />
                                                 <TextInput
                                                     id="bio"
                                                     type="text"
                                                     value={bio || ""}
                                                     placeholder="Bio"
-                                                    onChange={(e) => { setBio(e.target.value); setIsEdit(true) }}
+                                                    onChange={handleBioChange}
                                                 />
                                             </div>
                                         </div>
-                                        {isEdit &&
+                                        {(isEditingName || isEditingBio) &&
                                             <Button type="submit" onClick={updateNameAndBio} disabled={loading} className="!w-full" gradientDuoTone="purpleToPink">
                                                 {loading ?
                                                     <>
@@ -622,7 +637,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                                     />
                                                 </div>
                                             </div>
-                                            {isEdit &&
+                                            {isEditingUsername &&
                                                 <Button type="submit" onClick={updateUsername} disabled={loading} className="!w-full" gradientDuoTone="purpleToPink">
                                                     {loading ?
                                                         <>
