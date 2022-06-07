@@ -26,6 +26,6 @@
     }
 
     .dragging {
-        @apply ease-in-out scale-105
+        @apply ease-in-out duration-300 scale-105
     }
 }
