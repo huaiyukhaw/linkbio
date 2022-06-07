@@ -25,7 +25,11 @@
         display: none;
     }
 
-    .dragging {
-        @apply ease-in-out duration-300 scale-105
+    .sortable-chosen {
+        @apply scale-105 skew-y-1
+    }
+
+    .sortable-ghost {
+        @apply opacity-0
     }
 }
