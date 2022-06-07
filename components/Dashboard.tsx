@@ -383,7 +383,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
     }
 
     return (
-        <div className="dark:text-white w-full py-base px-2 sm:px-6 overflow-auto scrollbar hover:scrollbar-visible">
+        <div className="dark:text-white w-full py-safe px-2 sm:px-6 overflow-auto scrollbar hover:scrollbar-visible">
             <div className="py-6">
                 <Tabs.Group
                     aria-label="Tabs for Dashboard"
