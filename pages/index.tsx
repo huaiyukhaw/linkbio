@@ -53,6 +53,7 @@ export default function Home() {
             h-screen w-screen
             overflow-auto
             absolute
+            py-safe
           ">
           {/* <header className="flex-shrink-0 w-full">
             <Navbar profile={profile} session={session} />

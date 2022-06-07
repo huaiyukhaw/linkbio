@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 export default function ProfileComponent({ profile, mode }: { profile: Profile, mode: "card" | "page" }) {
     return (
-        <div className="bg-white dark:bg-gray-900 dark:text-white">
+        <div className="bg-white dark:bg-gray-900 dark:text-white py-safe">
             {
                 mode === "page" &&
                 <div className="absolute right-2 top-2 z-50">
