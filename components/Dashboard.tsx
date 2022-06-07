@@ -505,13 +505,14 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                 delayOnTouchOnly={true}
                                 animation={150}
                                 easing="cubic-bezier(1, 0, 0, 1)"
-                                ghostClass="opacity-0"
-                                handle=".drag-handle"
+                                ghostClass="sortable-ghost"
+                                chosenClass="sortable-chosen"
+                                handle=".sortable-handle"
                             >
                                 {
                                     links.map((link) => (
                                         <div
-                                            className="drag-handle cursor-move relative group flex items-center w-full bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                                            className="sortable-handle cursor-move relative group flex items-center w-full bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
                                             key={link.id}
                                         >
                                             <div className="p-4">
