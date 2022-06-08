@@ -1,7 +1,6 @@
 import Auth from '../components/Auth'
 import Dashboard from '../components/Dashboard'
 import UserProfile from '../components/UserProfile'
-import Navbar from '../components/Navbar'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { AuthSession } from '@supabase/supabase-js'
