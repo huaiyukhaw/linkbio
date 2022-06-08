@@ -239,20 +239,26 @@ export default function Dashboard({ session }: { session: AuthSession }) {
     async function updateUsername() {
         try {
             setLoading(true)
-            const user = supabase.auth.user()
 
-            const updates = {
-                id: user!.id,
-                username: username,
-                updated_at: new Date(),
-            }
+            if (username!.length < 4 || null) {
+                alert("Your username needs to be longer than 3 characters.")
 
-            let { error } = await supabase.from("profiles").upsert(updates, {
-                returning: "minimal", // Don"t return the value after inserting
-            })
+            } else {
+                const user = supabase.auth.user()
 
-            if (error) {
-                throw error
+                const updates = {
+                    id: user!.id,
+                    username: username,
+                    updated_at: new Date(),
+                }
+
+                let { error } = await supabase.from("profiles").upsert(updates, {
+                    returning: "minimal", // Don"t return the value after inserting
+                })
+
+                if (error) {
+                    throw error
+                }
             }
         } catch (error: any) {
             alert(error.message)
@@ -275,7 +281,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
             }
 
             let { error } = await supabase.from("profiles").upsert(updates, {
-                returning: "minimal", // Don"t return the value after inserting
+                returning: "minimal", // Don't return the value after inserting
             })
 
             if (error) {
@@ -433,7 +439,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                                 value={username || ""}
                                                 placeholder="yourname"
                                                 onChange={(e) => handleClaimChange(e)}
-                                                helperText={`${DOMAIN}/${username}`}
+                                                helperText={username ? `${DOMAIN}/${username}` : `${DOMAIN}/`}
                                             />
                                         </div>
                                         <Button type="submit" className="!w-full sm:!w-max" onClick={claimUsername} disabled={loading} gradientDuoTone="purpleToPink">
