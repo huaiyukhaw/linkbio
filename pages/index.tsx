@@ -55,9 +55,6 @@ export default function Home() {
             absolute
             py-safe
           ">
-          {/* <header className="flex-shrink-0 w-full">
-            <Navbar profile={profile} session={session} />
-          </header> */}
           <div className="flex p-4 overflow-auto grow">
             <div className="hidden flex-none md:flex justify-end items-start pr-16 pt-8 w-5/12">
               <UserProfile userProfile={profile} />

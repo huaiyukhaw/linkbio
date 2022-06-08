@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabaseClient'
 import { Profile } from '../lib/constants'
 import ProfilePage from '../components/Profile'
+import Head from 'next/head'
 
 export async function getServerSidePaths() {
     try {
@@ -43,6 +44,12 @@ export async function getServerSideProps({ params }: { params: Profile }) {
 
 export default function Username({ data: profile }: { data: Profile }) {
     return (
-        <ProfilePage profile={profile} mode="page" />
+        <>
+            <Head>
+                <title>{profile.name ? profile.name : profile.username}</title>
+                <meta name="description" content={profile.bio ? profile.bio : "The One Link for All Your Links"} />
+                <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover' />
+            </Head>
+            <ProfilePage profile={profile} mode="page" /></>
     )
 }
