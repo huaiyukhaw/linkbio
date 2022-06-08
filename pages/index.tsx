@@ -20,22 +20,24 @@ export default function Home() {
 
   useEffect(() => {
     getUserProfile()
-  }, [])
+  }, [session])
 
   async function getUserProfile() {
     try {
       const user = supabase.auth.user()
 
-      const { data, error } = await supabase
-        .from<Profile>("profiles")
-        .select()
-        .eq("id", user!.id)
-        .single()
+      if (user) {
+        const { data, error } = await supabase
+          .from<Profile>("profiles")
+          .select()
+          .eq("id", user!.id)
+          .single()
 
-      if (error || !data) {
-        throw error || new Error("No data")
+        if (error || !data) {
+          throw error || new Error("No data")
+        }
+        setProfile(data)
       }
-      setProfile(data)
     } catch (error: any) {
       console.log("error", error.message)
     }
