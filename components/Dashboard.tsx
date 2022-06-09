@@ -11,6 +11,7 @@ import { HiAtSymbol } from 'react-icons/hi'
 import { v4 as uuidv4 } from 'uuid'
 import { ReactSortable } from "react-sortablejs";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import ThemeSwitch from './ThemeSwitch'
 
 export default function Dashboard({ session }: { session: AuthSession }) {
     const [loading, setLoading] = useState<boolean>(true)
@@ -665,7 +666,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                 <h5 className="text-2xl font-bold text-gray-900 dark:text-white flex-1">
                                     Switch to dark or light theme
                                 </h5>
-                                <DarkThemeToggle />
+                                <ThemeSwitch />
                             </div>
                             <Button color="red" onClick={signOut}>
                                 Sign Out

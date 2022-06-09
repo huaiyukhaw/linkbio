@@ -15,7 +15,7 @@ module.exports = {
       },
     },
   },
-  darkMode: 'media',
+  darkMode: 'class',
   plugins: [
     require("flowbite/plugin"),
     require('@tailwindcss/line-clamp')

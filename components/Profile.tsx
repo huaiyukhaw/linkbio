@@ -8,7 +8,7 @@ import Logo from './Logo'
 
 export default function ProfileComponent({ profile, mode }: { profile: Profile, mode: "card" | "page" }) {
     return (
-        <div className="bg-white dark:bg-gray-900 dark:text-white py-safe">
+        <div className="bg-white dark:bg-gray-900 dark:text-white py-safe rounded-3xl">
             {
                 mode === "page" &&
                 <div className="absolute right-2 top-2 z-50">

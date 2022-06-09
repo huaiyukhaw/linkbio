@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { Card, Spinner, TextInput, Button } from 'flowbite-react'
 import { FcGoogle } from 'react-icons/fc'
+import { DarkThemeToggle } from 'flowbite-react'
 
 export default function Auth({ }) {
   const [loading, setLoading] = useState(false)
@@ -40,6 +41,9 @@ export default function Auth({ }) {
 
   return (
     <div className="flex flex-col items-center justify-center mx-4 py-safe">
+      <div className="absolute right-2 top-2 z-50">
+        <DarkThemeToggle />
+      </div>
       <div className="max-w-lg mx-auto mt-36 sm:mt-48 lg:mt-64">
         <h1 className="text-5xl sm:text-6xl font-bold text-center">The One Link for All Your Links</h1>
       </div>
