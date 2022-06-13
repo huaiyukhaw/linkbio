@@ -2,9 +2,8 @@ import { HOST, Profile } from '../lib/constants'
 import Avatar from './Avatar'
 import { HiExternalLink } from 'react-icons/hi'
 import classNames from 'classnames';
-import { DarkThemeToggle } from 'flowbite-react';
-import Image from 'next/image';
 import Logo from './Logo'
+import ThemeSwitch from './ThemeSwitch';
 
 export default function ProfileComponent({ profile, mode }: { profile: Profile, mode: "card" | "page" }) {
     return (
@@ -12,7 +11,7 @@ export default function ProfileComponent({ profile, mode }: { profile: Profile, 
             {
                 mode === "page" &&
                 <div className="absolute right-2 top-2 z-50">
-                    <DarkThemeToggle />
+                    <ThemeSwitch />
                 </div>
             }
             <div className={classNames("flex flex-col overflow-auto px-6 pt-12 pb-6 dark:text-white text-center", { "h-[650px] w-[315px] rounded-3xl border-[12px] border-gray-800 dark:border-gray-700 scrollbar": mode === "card" }, { "max-w-lg mx-auto min-h-screen": mode === "page" })} >
