@@ -54,9 +54,9 @@ export default function Auth({ }) {
             Sign in with Google
           </button>
           <div className="relative flex items-center">
-            <div className="flex-grow border-t border-gray-600"></div>
-            <span className="flex-shrink mx-2 text-gray-400 text-xs font-semibold">OR</span>
-            <div className="flex-grow border-t border-gray-600"></div>
+            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+            <span className="flex-shrink mx-2 text-gray-400 dark:text-gray-400 text-xs">or</span>
+            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
           </div>
           {isSent ?
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
