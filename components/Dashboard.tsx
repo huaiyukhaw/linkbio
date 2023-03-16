@@ -297,15 +297,6 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         }
     }
 
-    function checkUrlPrefix(s: string) {
-        var httpPrefix = "http://";
-        var httpsPrefix = "https://";
-        if (s.substr(0, httpPrefix.length) !== httpPrefix && s.substr(0, httpsPrefix.length) !== httpsPrefix) {
-            s = httpPrefix + s;
-        }
-        return s
-    }
-
     function setLink(link: Link) {
         setLinkTitle(link.title)
         setLinkUrl(link.url)
@@ -327,25 +318,44 @@ export default function Dashboard({ session }: { session: AuthSession }) {
         setEditingLink(true)
     }
 
+    function isValidHttpUrl(url: string) {
+        try {
+            const newUrl = new URL(url);
+            console.log(newUrl)
+            return newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
+        } catch (err) {
+            return false;
+        }
+    }
+
     function saveNewLink() {
-        if (linkTitle !== "" && linkUrl !== "") {
-            const newLink = { "title": linkTitle, "url": checkUrlPrefix(linkUrl), "id": uuidv4() }
+        if (linkUrl.length < 1) {
+            alert("New link must not be empty.")
+            return
+        }
+        if (isValidHttpUrl(linkUrl)) {
+            const newLink = { "title": linkTitle, "url": linkUrl, "id": uuidv4() }
             setLinks((oldArray) => {
                 return [...oldArray, newLink]
             })
             resetLink()
-        } else {
-            alert("New link must not be empty.")
+        }
+        else {
+            alert("Please enter a valid URL.")
         }
     }
 
     function saveEditedLink() {
-        if (linkTitle !== "" && linkUrl !== "") {
+        if (linkUrl.length < 1) {
+            alert("New link must not be empty.")
+            return
+        }
+        if (isValidHttpUrl(linkUrl)) {
             const newLinks = links.map((link) => {
                 if (link.id === linkId) {
                     return {
                         title: linkTitle,
-                        url: checkUrlPrefix(linkUrl),
+                        url: linkUrl,
                         id: linkId
                     }
                 }
@@ -354,7 +364,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
             setLinks(newLinks)
             resetLink()
         } else {
-            alert("Link must not be empty.")
+            alert("Please enter a valid URL.")
         }
     }
 
@@ -594,7 +604,7 @@ export default function Dashboard({ session }: { session: AuthSession }) {
                                                 className="dark:border-gray-500 dark:bg-gray-600"
                                                 type="text"
                                                 value={linkUrl || ""}
-                                                placeholder="URL"
+                                                placeholder="https://example.com"
                                                 onChange={(e) => setLinkUrl(e.target.value)}
                                             />
                                         </div>
