@@ -1,34 +1,66 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# LastQR
 
-## Getting Started
+> Simplify your online presence with a customizable link in bio.
 
-First, run the development server:
+Try it! [link.huaiyukhaw.com](https://link.huaiyukhaw.com)
 
-```bash
+LinkBio is a web-based application that allows users to create a customizable link in bio for their online presence. With LinkBio, users can share a single link that contains all of their important links, social media profiles, and contact information, making it easier for their audience to find and connect with them.
+
+---
+
+## Author
+
+**Huaiyu Khaw** 
+- *Initial work* - [LinkBio](https://github.com/huaiyukhaw/linkbio) (GitHub)
+- *Released on* [Vercel](https://vercel.com)
+- *Connect with me on* [LinkedIn](https://www.linkedin.com/in/huaiyukhaw)
+
+## Showcase
+
+This project was designed to demonstrate:
+
+- Use of React, Typescript and TailwindCSS to build a modern and responsive user interface.
+- Implementation of server-side rendering with Next.js for improved performance and search engine optimization.
+- Utilization of a variety of libraries, such as react-icons for icons and react-copy-to-clipboard for easy link sharing.
+- Integration with Supabase, a backend-as-a-service platform that provides a PostgreSQL database and API, to store and manage user data.
+
+## Usage example
+
+The usage of LinkBio is straightforward: users simply create an account and customize their link in bio with their preferred links. Once they're done, they can share their link in bio with their audience, making it easier for them to find and connect with them.
+
+## Screenshots
+
+![image](https://user-images.githubusercontent.com/31930091/226115252-bd225c02-8b13-4152-83ba-5522f459b768.png)
+
+---
+
+## Development setup
+
+```sh
+npm install
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Built With
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- [React](https://reactjs.org)
+- [Next.js](https://nextjs.org)
+- [Typescript](https://www.typescriptlang.org)
+- [Supabase](https://supabase.com) - 
+- [TailwindCSS](https://tailwindcss.com)
+- [Flowbite](https://flowbite.com) - ui components built with tailwindcss
+- [React Copy To Clipboard](https://github.com/nkbt/react-copy-to-clipboard)
+- [SortableJS](https://github.com/SortableJS/Sortable) - reorderable drag-and-drop lists
+- [React Icons](https://react-icons.github.io/react-icons)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+---
 
-## Learn More
+## Contributing
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Fork it (<https://github.com/huaiyukhaw/linkbio/fork>)
+2. Create your feature branch (`git checkout -b feature/fooBar`)
+3. Commit your changes (`git commit -am 'Add some fooBar'`)
+4. Push to the branch (`git push origin feature/fooBar`)
+5. Create a new Pull Request
