@@ -1,4 +1,4 @@
-# LastQR
+# LinkBio
 
 > Simplify your online presence with a customizable link in bio.
 
