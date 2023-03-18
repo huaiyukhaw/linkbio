@@ -30,7 +30,7 @@ The usage of LinkBio is straightforward: users simply create an account and cust
 
 ## Screenshots
 
-![image](https://user-images.githubusercontent.com/31930091/226115252-bd225c02-8b13-4152-83ba-5522f459b768.png)
+![image](https://user-images.githubusercontent.com/31930091/226115438-05c4e636-94f0-4143-a0f1-ceed61df4884.png)
 
 ---
 
